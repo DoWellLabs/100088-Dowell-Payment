@@ -17,3 +17,9 @@ Fixed import issues
 ### Feature
 
 Updated Paypal API params with `mode`
+
+[1.0.8]
+
+## Update
+
+Removed Mode
