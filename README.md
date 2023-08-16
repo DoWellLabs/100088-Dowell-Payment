@@ -1,6 +1,6 @@
 # Dowell-Payment Package
 
-## Version 1.0.6
+## Version 1.0.7
 
 ### Description
 
@@ -44,7 +44,8 @@ const Paypal = () => {
         'usd',
         'https://www.google.com',
         'YOUR_PAYPAL_CLIENT_ID',
-        'YOUR_PAYPAL_SECRET_KEY'
+        'YOUR_PAYPAL_SECRET_KEY',
+        mode
       );
       const data = JSON.parse(initializationResult);
       setApprovalUrl(data.approval_url);
@@ -65,7 +66,8 @@ const Paypal = () => {
         apiKey,
         paymentId,
         'YOUR_PAYPAL_CLIENT_ID',
-        'YOUR_PAYPAL_SECRET_KEY'
+        'YOUR_PAYPAL_SECRET_KEY',
+        mode
       );
       setPaymentResult(response);
     } catch (error) {
@@ -171,7 +173,7 @@ export default Stripe;
 
 ### API(PAYPAL)
 
-initializePayment(apiKey, price, product, currency, callbackUrl, paypal_client_id, paypal_secret_key)
+initializePayment(apiKey, price, product, currency, callbackUrl, paypal_client_id, paypal_secret_key,mode)
 Initiates a payment using the specified payment method for paypal.
 
 -`apiKey`: Your API key for accessing the payment service.
@@ -181,8 +183,9 @@ Initiates a payment using the specified payment method for paypal.
 -`callbackUrl`: The URL to which the payment service will redirect after payment.
 -`paypal_client_id`: Your PAYPAL CLIENT ID for accessing paypal payment service.
 -`paypal_secret_key`: Your PAYPAL SECRET key for accessing paypal payment service.
+-`mode`: The PAYPAL mode of payment.
 
--`verifyPayment(apiKey, paymentId, paypal_client_id, paypal_secret_key)`
+-`verifyPayment(apiKey, paymentId, paypal_client_id, paypal_secret_key, mode)`
 
 Verifies a payment using the specified payment method for paypal.
 
@@ -190,6 +193,7 @@ Verifies a payment using the specified payment method for paypal.
 -`paymentId`: The ID of the payment to verify.
 -`paypal_client_id`: Your PAYPAL CLIENT ID for accessing paypal payment service.
 -`paypal_secret_key`: Your PAYPAL SECRET key for accessing paypal payment service.
+-`mode`: The PAYPAL mode of payment.
 
 ### API(STRIPE)
 

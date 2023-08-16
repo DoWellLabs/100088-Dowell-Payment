@@ -6,19 +6,21 @@ class PayPalPayment {
     currency,
     callbackUrl,
     paypal_client_id,
-    paypal_secret_key
+    paypal_secret_key,
+    mode
   ) {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         api_key: apiKey,
-        price:price,
-        product:product,
+        price: price,
+        product: product,
         currency_code: currency,
         callback_url: callbackUrl,
         paypal_client_id: paypal_client_id,
-        paypal_secret_key:paypal_secret_key,
+        paypal_secret_key: paypal_secret_key,
+        mode: mode,
       }),
       redirect: 'follow',
     };
@@ -38,6 +40,7 @@ class PayPalPayment {
         id: paymentId,
         paypal_client_id,
         paypal_secret_key,
+        mode,
       }),
       redirect: 'follow',
     };

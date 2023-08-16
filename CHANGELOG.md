@@ -11,3 +11,9 @@ Separated paypal implementation from the stripe implementation
 ### Fixed
 
 Fixed import issues
+
+[1.0.7]
+
+### Feature
+
+Updated Paypal API params with `mode`
