@@ -1,5 +1,5 @@
 class Payment {
-  async initializePayment(
+  async initializePayment({
     paymentMethod,
     price,
     product,
@@ -7,8 +7,8 @@ class Payment {
     callback_url,
     timezone,
     description,
-    credit
-  ) {
+    credit,
+  }) {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -29,7 +29,7 @@ class Payment {
     return response.text();
   }
 
-  async verifyPayment(paymentMethod, paymentId) {
+  async verifyPayment({ paymentMethod, paymentId }) {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
