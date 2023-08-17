@@ -1,49 +1,49 @@
-class StripePayment {
+class Payment {
   async initializePayment(
-    apiKey,
+    paymentMethod,
     price,
     product,
     currency,
     callbackUrl,
-    stripe_key
+    timezone,
+    description,
+    credit
   ) {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        api_key: apiKey,
-        price,
+        price: price,
         product,
         currency_code: currency,
         callback_url: callbackUrl,
-        stripe_key,
+        timezone: timezone,
+        description: description,
+        credit: credit,
       }),
       redirect: 'follow',
     };
-
-    const url = `https://100088.pythonanywhere.com/api/stripe/initialize/public/${apiKey}`;
+    const url = `https://100088.pythonanywhere.com/api/${paymentMethod}/initialize`;
 
     const response = await fetch(url, requestOptions);
     return response.text();
   }
 
-  async verifyPayment(apiKey, paymentId, stripe_key) {
+  async verifyPayment(paymentMethod, paymentId) {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        api_key: apiKey,
         id: paymentId,
-        stripe_key,
       }),
       redirect: 'follow',
     };
 
-    const url = `https://100088.pythonanywhere.com/api/verify/payment/stripe/public/${apiKey}`;
+    const url = `https://100088.pythonanywhere.com/api/verify/payment/${paymentMethod}`;
 
     const response = await fetch(url, requestOptions);
     return response.text();
   }
 }
 
-export default StripePayment;
+export default Payment;

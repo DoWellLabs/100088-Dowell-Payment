@@ -1,6 +1,6 @@
 # Dowell-Payment Package
 
-## Version 1.0.8
+## Version 1.0.9
 
 ### Description
 
@@ -18,55 +18,56 @@ npm install dowellpayment
 
 Import the package and use the Payment class to initiate and verify payments using either Stripe or PayPal.
 
-### PayPal Example
+### Example
 
 ```javascript
-import React, { useState } from 'react';
-import PayPalPayment from 'dowellpayment';
+import Payment from 'dowellpayment';
 
-const Paypal = () => {
+import { useState } from 'react';
+
+const App = () => {
+  const [paymentMethod, setPaymentMethod] = useState('stripe');
   const [paymentResult, setPaymentResult] = useState();
   const [approvalUrl, setApprovalUrl] = useState();
   const [paymentId, setPaymentId] = useState();
-  const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
-  // Add other keys
 
   const handleInitializePayment = async () => {
-    // Initialize the Payment class
-    const payment = new PayPalPayment();
+    const payment = new Payment();
 
     try {
-      // Initialize the payment based on the selected payment method
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          price: 500,
+          product: 'Product Name',
+          currency_code: 'usd',
+          callback_url: 'https://www.google.com',
+          timezone: 'Asia/Calcutta',
+          description: 'credit',
+          credit: '1000',
+        }),
+        redirect: 'follow',
+      };
+
       const initializationResult = await payment.initializePayment(
-        apiKey,
-        500,
-        'Product Name',
-        'usd',
-        'https://www.google.com',
-        'YOUR_PAYPAL_CLIENT_ID',
-        'YOUR_PAYPAL_SECRET_KEY'
+        paymentMethod,
+        requestOptions
       );
+
       const data = JSON.parse(initializationResult);
       setApprovalUrl(data.approval_url);
       setPaymentId(data.payment_id);
-
-      // setPaymentResult(initializationResult);
     } catch (error) {
       console.error('Error while initializing payment', error);
     }
   };
 
   const handleVerifyPayment = async () => {
-    console.log(paymentId);
     try {
-      const payment = new PayPalPayment();
+      const payment = new Payment();
 
-      const response = await payment.verifyPayment(
-        apiKey,
-        paymentId,
-        'YOUR_PAYPAL_CLIENT_ID',
-        'YOUR_PAYPAL_SECRET_KEY'
-      );
+      const response = await payment.verifyPayment(paymentMethod, paymentId);
       setPaymentResult(response);
     } catch (error) {
       console.error('Error verifying payment:', error);
@@ -74,12 +75,21 @@ const Paypal = () => {
   };
   return (
     <div>
-      <h1>PayPal Payment Component</h1>
+      <h1>Payment Component</h1>
+      <label>
+        Payment Method:
+        <select
+          value={paymentMethod}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        >
+          <option value="stripe">Stripe</option>
+          <option value="paypal">PayPal</option>
+        </select>
+      </label>
       <button onClick={handleInitializePayment}>Initiate Payment</button>
-      <br />
       <a href={approvalUrl}>{approvalUrl}</a>
       <hr />
-      {paymentId && (
+      {approvalUrl && (
         <div>
           <button onClick={handleVerifyPayment}>Verify Payment</button>
           <p>Payment Result:</p>
@@ -90,132 +100,37 @@ const Paypal = () => {
   );
 };
 
-export default Paypal;
+export default App;
 
 ```
 
-### Stripe Example
+### API
 
-```javascript
+initializePayment(paymentMethod, price, product, currency, callbackUrl, timezone, description, credit)
+Initiates a payment using the specified payment method (paypal or stripe).
 
-import React, { useState } from 'react';
-import StripePayment from 'dowellpayment';
+1. -`paymentMethod`: Your Payment method of choice(Paypal or Stripe).
+2. -`price`: The price of the product(Paypal only supported price of 2 decimal point at most and Stripe only support whole number).
+3. -`product`: The name of the product.
+4. -`currency`: The currency code (e.g., 'usd').
+5. -`callbackUrl`: The URL to which the payment service will redirect after payment.
+6. -`timezone`, `description`,`credit`: They are used to generate a voucher(Omit them if voucher is not necessary).
 
-const Stripe = () => {
-  const [paymentResult, setPaymentResult] = useState();
-  const [approvalUrl, setApprovalUrl] = useState();
-  const [paymentId, setPaymentId] = useState();
-  const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
-  // Add other keys
+-`verifyPayment(paymentMethod, paymentId)`
 
-  const handleInitializePayment = async () => {
-    // Initialize the Payment class
-    const payment = new StripePayment();
+Verifies a payment using the specified payment method (paypal or stripe).
 
-    try {
-      // Initialize the payment based on the selected payment method
-      const initializationResult = await payment.initializePayment(
-        apiKey,
-        500,
-        'Product Name',
-        'usd',
-        'https://www.google.com',
-        'YOUR_STRIPE_KEY'
-      );
-      const data = JSON.parse(initializationResult);
-      setApprovalUrl(data.approval_url);
-      setPaymentId(data.payment_id);
+1. -`paymentMethod`: Your Payment method of choice(Paypal or Stripe).
+2. -`paymentId`: The ID of the payment to verify.
 
-      // setPaymentResult(initializationResult);
-    } catch (error) {
-      console.error('Error while initializing payment', error);
-    }
-  };
+### NOTE
 
-  const handleVerifyPayment = async () => {
-    console.log(paymentId);
-    try {
-      const payment = new StripePayment();
+1. Stripe supports paying in local currency across more than 135 countries.
 
-      const response = await payment.verifyPayment(
-        apiKey,
-        paymentId,
-        'YOUR_STRIPE_KEY'
-      );
-      setPaymentResult(response);
-    } catch (error) {
-      console.error('Error verifying payment:', error);
-    }
-  };
-  return (
-    <div>
-      <h1>Stripe Payment Component</h1>
-      <button onClick={handleInitializePayment}>Initiate Payment</button>
-      <br />
-      <a href={approvalUrl}>{approvalUrl}</a>
-      <hr />
-      {paymentId && (
-        <div>
-          <button onClick={handleVerifyPayment}>Verify Payment</button>
-          <p>Payment Result:</p>
-          <pre>{paymentResult}</pre>
-        </div>
-      )}
-    </div>
-  );
-};
+2. PayPal supports paying in local currency in 25 countries.
 
-export default Stripe;
-
-```
-
-### API(PAYPAL)
-
-initializePayment(apiKey, price, product, currency, callbackUrl, paypal_client_id, paypal_secret_key)
-Initiates a payment using the specified payment method for paypal.
-
--`apiKey`: Your API key for accessing the payment service.
--`price`: The price of the product.
--`product`: The name of the product.
--`currency`: The currency code (e.g., 'usd').
--`callbackUrl`: The URL to which the payment service will redirect after payment.
--`paypal_client_id`: Your PAYPAL CLIENT ID for accessing paypal payment service.
--`paypal_secret_key`: Your PAYPAL SECRET key for accessing paypal payment service.
-
--`verifyPayment(apiKey, paymentId, paypal_client_id, paypal_secret_key)`
-
-Verifies a payment using the specified payment method for paypal.
-
--`apiKey`: Your API key for accessing the payment service.
--`paymentId`: The ID of the payment to verify.
--`paypal_client_id`: Your PAYPAL CLIENT ID for accessing paypal payment service.
--`paypal_secret_key`: Your PAYPAL SECRET key for accessing paypal payment service.
-
-### API(STRIPE)
-
-initializePayment(apiKey, price, product, currency, callbackUrl, stripe_key)
-Initiates a payment using the specified payment method for stripe.
-
--`apiKey`: Your API key for accessing the payment service.
--`price`: The price of the product.
--`product`: The name of the product.
--`currency`: The currency code (e.g., 'usd').
--`callbackUrl`: The URL to which the payment service will redirect after payment.
--`stripe_key`: Your STRIPE key for accessing stripe payment service.
-
--`verifyPayment(apiKey, paymentId, stripe_key)`
-
-Verifies a payment using the specified payment method for stripe.
-
--`apiKey`: Your API key for accessing the payment service.
--`paymentId`: The ID of the payment to verify.
--`stripe_key`: Your STRIPE key for accessing stripe payment service.
+3. And also Paypal only supported price of 2 decimal point at most as part of the request body While Stripe only support whole number
 
 ### License
 
 This project is licensed under the Apache License 2.0.
-
-``` bash
-Replace `'your_api_key'` `'paypal_client_id'` `'paypal_secret_key'` `'stripe_key'` with your actual API key for both the initialization and verification calls. Make sure to include this README.md file in the root directory of your npm package. This README will provide users with an overview of your package, installation instructions, usage examples, and information about the API and license.
-
-```
