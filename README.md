@@ -21,7 +21,7 @@ Import the package and use the Payment class to initiate and verify payments usi
 ### Example
 
 ```javascript
-import Payment from 'dowellpayment';
+import {Payment} from 'dowellpayment';
 
 import { useState } from 'react';
 
@@ -38,7 +38,7 @@ const App = () => {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+        body: {
           price: 500,
           product: 'Product Name',
           currency_code: 'usd',
@@ -46,7 +46,7 @@ const App = () => {
           timezone: 'Asia/Calcutta',
           description: 'credit',
           credit: '1000',
-        }),
+        },
         redirect: 'follow',
       };
 

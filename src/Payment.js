@@ -3,8 +3,8 @@ class Payment {
     paymentMethod,
     price,
     product,
-    currency,
-    callbackUrl,
+    currency_code,
+    callback_url,
     timezone,
     description,
     credit
@@ -14,9 +14,9 @@ class Payment {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         price: price,
-        product,
-        currency_code: currency,
-        callback_url: callbackUrl,
+        product: product,
+        currency_code: currency_code,
+        callback_url: callback_url,
         timezone: timezone,
         description: description,
         credit: credit,
