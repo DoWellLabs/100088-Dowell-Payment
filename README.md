@@ -35,25 +35,18 @@ const App = () => {
     const payment = new Payment();
 
     try {
-      const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: {
-          price: 500,
-          product: 'Product Name',
-          currency_code: 'usd',
-          callback_url: 'https://www.google.com',
-          timezone: 'Asia/Calcutta',
-          description: 'credit',
-          credit: '1000',
-        },
-        redirect: 'follow',
-      };
 
-      const initializationResult = await payment.initializePayment(
-        paymentMethod,
-        requestOptions
-      );
+
+      const initializationResult = await payment.initializePayment({
+        paymentMethod: paymentMethod,
+        price: 20,
+        product: 'sample name',
+        currency_code: 'usd',
+        callback_url: 'https://www.google.com',
+        timezone: 'Asia/Calcutta',
+        description: 'credit',
+        credit: '1000',
+      });
 
       const data = JSON.parse(initializationResult);
       setApprovalUrl(data.approval_url);
@@ -67,7 +60,7 @@ const App = () => {
     try {
       const payment = new Payment();
 
-      const response = await payment.verifyPayment(paymentMethod, paymentId);
+      const response = await payment.verifyPayment({paymentMethod, paymentId});
       setPaymentResult(response);
     } catch (error) {
       console.error('Error verifying payment:', error);
