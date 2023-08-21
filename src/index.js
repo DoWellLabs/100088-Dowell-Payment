@@ -1,4 +1,2 @@
-import DowellPaypal from './DowellPaypal';
-import DowellStripe from './DowellStripe';
-
-export { DowellPaypal, DowellStripe };
+export { default as DowellPaypal } from './DowellPaypal';
+export { default as DowellStripe } from './DowellStripe';
