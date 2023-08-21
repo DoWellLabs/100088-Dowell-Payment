@@ -1,3 +1,4 @@
-import Payment from './Payment';
+import DowellPaypal from './DowellPaypal';
+import DowellStripe from './DowellStripe';
 
-export default Payment;
+export { DowellPaypal, DowellStripe };

@@ -1,6 +1,6 @@
 # Dowell-Payment Package
 
-## Version 1.0.29
+## Version 1.0.31
 
 ### Description
 
@@ -18,35 +18,35 @@ npm install dowellpayment
 
 Import the package and use the Payment class to initiate and verify payments using either Stripe or PayPal.
 
-### Example
+### PayPal Example
 
 ```javascript
-import {Payment} from 'dowellpayment';
-
 import { useState } from 'react';
 
-const App = () => {
-  const [paymentMethod, setPaymentMethod] = useState('stripe');
+import DowellPaypal from 'dowellpayment'; // Adjust the path to the actual location of Payment.js
+
+const PayPal = () => {
   const [paymentResult, setPaymentResult] = useState();
   const [approvalUrl, setApprovalUrl] = useState();
   const [paymentId, setPaymentId] = useState();
+  const apiKey = import.meta.env.VITE_API_KEY;
 
   const handleInitializePayment = async () => {
-    const payment = new Payment();
-
     try {
+      const userEnteredPrice = 500.5; // Example user input (replace with actual user input)
+      let formattedPrice = parseFloat(userEnteredPrice).toFixed(2);
 
-
-      const initializationResult = await payment.initializePayment({
-        paymentMethod: paymentMethod,
-        price: 20,
-        product: 'sample name',
+      const initializationResult = await new DowellPaypal().initializePayment({
+        apiKey: apiKey,
+        price: formattedPrice,
+        product: 'Product Name',
         currency_code: 'usd',
         callback_url: 'https://www.google.com',
         timezone: 'Asia/Calcutta',
         description: 'credit',
         credit: '1000',
       });
+      console.log(initializationResult);
 
       const data = JSON.parse(initializationResult);
       setApprovalUrl(data.approval_url);
@@ -58,27 +58,24 @@ const App = () => {
 
   const handleVerifyPayment = async () => {
     try {
-      const payment = new Payment();
+      const response = await new DowellPaypal().verifyPayment({
+        apiKey: apiKey,
+        paymentId: paymentId,
+      });
 
-      const response = await payment.verifyPayment({paymentMethod, paymentId});
-      setPaymentResult(response);
+      if (response === 'false') {
+        console.error('Payment verification failed:', response);
+      } else {
+        setPaymentResult(response);
+      }
     } catch (error) {
-      console.error('Error verifying payment:', error);
+      console.error('Error verifying payment:', error.message);
     }
   };
+
   return (
     <div>
-      <h1>Payment Component</h1>
-      <label>
-        Payment Method:
-        <select
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-        >
-          <option value="stripe">Stripe</option>
-          <option value="paypal">PayPal</option>
-        </select>
-      </label>
+      <h1>PayPal Payment Component</h1>
       <button onClick={handleInitializePayment}>Initiate Payment</button>
       <a href={approvalUrl}>{approvalUrl}</a>
       <hr />
@@ -86,34 +83,129 @@ const App = () => {
         <div>
           <button onClick={handleVerifyPayment}>Verify Payment</button>
           <p>Payment Result:</p>
-          <pre>{paymentResult}</pre>
+          <pre>{JSON.stringify(paymentResult, null, 2)}</pre>
         </div>
       )}
     </div>
   );
 };
 
-export default App;
+export default PayPal;
 
 ```
 
-### API
+### Stripe Example
 
-initializePayment(paymentMethod, price, product, currency, callbackUrl, timezone, description, credit)
-Initiates a payment using the specified payment method (paypal or stripe).
+```javascript
+import { useState } from 'react';
 
-1. -`paymentMethod`: Your Payment method of choice(Paypal or Stripe).
-2. -`price`: The price of the product(Paypal only supported price of 2 decimal point at most and Stripe only support whole number).
+import DowellStripe from 'dowellpayment'; // Adjust the path to the actual location of Payment.js
+
+const Stripe = () => {
+  const [paymentResult, setPaymentResult] = useState();
+  const [approvalUrl, setApprovalUrl] = useState();
+  const [paymentId, setPaymentId] = useState();
+  const apiKey = import.meta.env.VITE_API_KEY;
+
+  const handleInitializePayment = async () => {
+    try {
+      const userEnteredPrice = 500.5; // Example user input (replace with actual user input)
+      let formattedPrice = parseInt(userEnteredPrice);
+
+      const initializationResult = await new DowellStripe().initializePayment({
+        apiKey: apiKey,
+        price: formattedPrice,
+        product: 'Product Name',
+        currency_code: 'usd',
+        callback_url: 'https://www.google.com',
+        timezone: 'Asia/Calcutta',
+        description: 'credit',
+        credit: '1000',
+      });
+      console.log(initializationResult);
+
+      const data = JSON.parse(initializationResult);
+      setApprovalUrl(data.approval_url);
+      setPaymentId(data.payment_id);
+    } catch (error) {
+      console.error('Error while initializing payment', error);
+    }
+  };
+
+  const handleVerifyPayment = async () => {
+    try {
+      const response = await new DowellStripe().verifyPayment({
+        apiKey: apiKey,
+        paymentId: paymentId,
+      });
+
+      if (response === 'false') {
+        console.error('Payment verification failed:', response);
+      } else {
+        setPaymentResult(response);
+      }
+    } catch (error) {
+      console.error('Error verifying payment:', error.message);
+    }
+  };
+
+  return (
+    <div>
+      <h1>Stripe Payment Component</h1>
+      <button onClick={handleInitializePayment}>Initiate Payment</button>
+      <a href={approvalUrl}>{approvalUrl}</a>
+      <hr />
+      {approvalUrl && (
+        <div>
+          <button onClick={handleVerifyPayment}>Verify Payment</button>
+          <p>Payment Result:</p>
+          <pre>{JSON.stringify(paymentResult, null, 2)}</pre>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Stripe;
+
+```
+
+### API(PAYPAL)
+
+initializePayment(apiKey,price, product, currency, callbackUrl, timezone, description, credit)
+Initiates a payment using the paypal payment method.
+
+1. -`apiKey`: Your API key for accessing the process module service.
+2. -`price`: The price of the product(Paypal only supported price of 2 decimal point at most).
 3. -`product`: The name of the product.
 4. -`currency`: The currency code (e.g., 'usd').
 5. -`callbackUrl`: The URL to which the payment service will redirect after payment.
 6. -`timezone`, `description`,`credit`: They are used to generate a voucher(Omit them if voucher is not necessary).
 
--`verifyPayment(paymentMethod, paymentId)`
+-`verifyPayment(paymentId, apiKey)`
 
-Verifies a payment using the specified payment method (paypal or stripe).
+Verifies a payment using the specified payment method for paypal.
 
-1. -`paymentMethod`: Your Payment method of choice(Paypal or Stripe).
+1. -`apiKey`: Your API key for accessing the process module service.
+2. -`paymentId`: The ID of the payment to verify.
+
+### API(STRIPE)
+
+initializePayment(apiKey,price, product, currency, callbackUrl, timezone, description, credit)
+Initiates a payment using the stripe payment method.
+
+1. -`apiKey`: Your API key for accessing the process module service.
+2. -`price`: The price of the product( Stripe only support whole number).
+3. -`product`: The name of the product.
+4. -`currency`: The currency code (e.g., 'usd').
+5. -`callbackUrl`: The URL to which the payment service will redirect after payment.
+6. -`timezone`, `description`,`credit`: They are used to generate a voucher(Omit them if voucher is not necessary).
+
+-`verifyPayment(paymentId, apiKey)`
+
+Verifies a payment using the specified payment method for stripe.
+
+1. -`apiKey`: Your API key for accessing the process module service.
 2. -`paymentId`: The ID of the payment to verify.
 
 ### NOTE

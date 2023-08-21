@@ -1,6 +1,5 @@
-class Payment {
+class DowellStripe {
   async initializePayment({
-    paymentMethod,
     price,
     product,
     currency_code,
@@ -9,14 +8,10 @@ class Payment {
     description,
     credit,
     apiKey,
-    sub_service_ids,
-    service_id,
   }) {
     try {
       const serviceResult = await this.runServiceRequest({
         apiKey,
-        sub_service_ids,
-        service_id,
       });
       // console.log(JSON.parse(serviceResult));
       console.log(JSON.parse(serviceResult).success);
@@ -44,7 +39,7 @@ class Payment {
         redirect: 'follow',
       };
 
-      const url = `https://100088.pythonanywhere.com/api/${paymentMethod}/initialize`;
+      const url = `https://100088.pythonanywhere.com/api/stripe/initialize`;
 
       const response = await fetch(url, requestOptions);
 
@@ -54,18 +49,10 @@ class Payment {
     }
   }
 
-  async verifyPayment({
-    paymentMethod,
-    paymentId,
-    apiKey,
-    sub_service_ids,
-    service_id,
-  }) {
+  async verifyPayment({ paymentId, apiKey }) {
     try {
       const serviceResult = await this.runServiceRequest({
         apiKey,
-        sub_service_ids,
-        service_id,
       });
 
       if (JSON.parse(serviceResult).success == false) {
@@ -85,7 +72,7 @@ class Payment {
         redirect: 'follow',
       };
 
-      const url = `https://100088.pythonanywhere.com/api/verify/payment/${paymentMethod}`;
+      const url = `https://100088.pythonanywhere.com/api/verify/payment/stripe`;
 
       const response = await fetch(url, requestOptions);
 
@@ -95,14 +82,14 @@ class Payment {
     }
   }
 
-  async runServiceRequest({ apiKey, sub_service_ids, service_id }) {
+  async runServiceRequest({ apiKey }) {
     try {
       const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sub_service_ids: sub_service_ids,
-          service_id: service_id,
+          sub_service_ids: ['DOWELL100331'],
+          service_id: 'DOWELL10033',
         }),
         redirect: 'follow',
       };
@@ -119,4 +106,4 @@ class Payment {
   }
 }
 
-export default Payment;
+export default DowellStripe;
