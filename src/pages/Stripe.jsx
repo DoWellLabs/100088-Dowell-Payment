@@ -6,7 +6,7 @@ const Stripe = () => {
   const [paymentResult, setPaymentResult] = useState();
   const [approvalUrl, setApprovalUrl] = useState();
   const [paymentId, setPaymentId] = useState();
-  const apiKey = 'ac1d7a9e-a731-4268-a665-e660fdaed9d5';
+  const apiKey = import.meta.env.VITE_API_KEY;
 
   const handleInitializePayment = async () => {
     try {
