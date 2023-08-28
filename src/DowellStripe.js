@@ -4,9 +4,7 @@ class DowellStripe {
     product,
     currency_code,
     callback_url,
-    timezone,
-    description,
-    credit,
+    stripe_key,
     apiKey,
   }) {
     try {
@@ -32,9 +30,7 @@ class DowellStripe {
           product: product,
           currency_code: currency_code,
           callback_url: callback_url,
-          timezone: timezone,
-          description: description,
-          credit: credit,
+          stripe_key: stripe_key,
         }),
         redirect: 'follow',
       };
@@ -67,6 +63,7 @@ class DowellStripe {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          stripe_key: stripe_key,
           id: paymentId,
         }),
         redirect: 'follow',

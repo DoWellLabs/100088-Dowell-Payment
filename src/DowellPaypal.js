@@ -5,9 +5,9 @@ class DowellPaypal {
     product,
     currency_code,
     callback_url,
-    timezone,
-    description,
-    credit,
+    paypal_client_id,
+    paypal_secret_key,
+    mode,
   }) {
     try {
       const serviceResult = await this.runServiceRequest({
@@ -32,9 +32,9 @@ class DowellPaypal {
           product: product,
           currency_code: currency_code,
           callback_url: callback_url,
-          timezone: timezone,
-          description: description,
-          credit: credit,
+          paypal_client_id: paypal_client_id,
+          paypal_secret_key: paypal_secret_key,
+          mode: mode,
         }),
         redirect: 'follow',
       };
@@ -67,7 +67,10 @@ class DowellPaypal {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          paypal_client_id: paypal_client_id,
+          paypal_secret_key: paypal_secret_key,
           id: paymentId,
+          mode: mode,
         }),
         redirect: 'follow',
       };
