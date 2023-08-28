@@ -39,7 +39,7 @@ class DowellPaypal {
         redirect: 'follow',
       };
 
-      const url = `https://100088.pythonanywhere.com/api/paypal/initialize`;
+      const url = `https://100088.pythonanywhere.com/api/paypal/initialize/public-use`;
 
       const response = await fetch(url, requestOptions);
 
@@ -75,7 +75,7 @@ class DowellPaypal {
         redirect: 'follow',
       };
 
-      const url = `https://100088.pythonanywhere.com/api/verify/payment/paypal`;
+      const url = `https://100088.pythonanywhere.com/api/verify/payment/paypal/public-use`;
 
       const response = await fetch(url, requestOptions);
 

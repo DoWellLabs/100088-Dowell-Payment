@@ -1,6 +1,6 @@
 # Dowell-Payment Package
 
-## Version 1.0.0
+## Version 1.0.1
 
 ### Description
 
@@ -29,7 +29,10 @@ const PayPal = () => {
   const [paymentResult, setPaymentResult] = useState();
   const [approvalUrl, setApprovalUrl] = useState();
   const [paymentId, setPaymentId] = useState();
-  const apiKey = import.meta.env.VITE_API_KEY;
+  const apiKey = 'YOUR_API_KEY';
+  const paypal_client_id = 'YOUR_PAYPAL_CLIENT_ID';
+  const paypal_secret_key = 'YOUR_PAYPAL_SECRET_KEY';
+  const mode = 'YOUR_PAYPAL_MODE'; // live or sandbox
 
   const handleInitializePayment = async () => {
     try {
@@ -42,9 +45,9 @@ const PayPal = () => {
         product: 'Product Name',
         currency_code: 'usd',
         callback_url: 'https://www.google.com',
-        timezone: 'Asia/Calcutta',
-        description: 'credit',
-        credit: '1000',
+        paypal_client_id: paypal_client_id,
+        paypal_secret_key: paypal_secret_key,
+        mode: mode,
       });
       console.log(initializationResult);
 
@@ -60,6 +63,9 @@ const PayPal = () => {
     try {
       const response = await new DowellPaypal().verifyPayment({
         apiKey: apiKey,
+        paypal_client_id: paypal_client_id,
+        paypal_secret_key: paypal_secret_key,
+        mode: mode,
         paymentId: paymentId,
       });
 
@@ -105,7 +111,8 @@ const Stripe = () => {
   const [paymentResult, setPaymentResult] = useState();
   const [approvalUrl, setApprovalUrl] = useState();
   const [paymentId, setPaymentId] = useState();
-  const apiKey = import.meta.env.VITE_API_KEY;
+  const apiKey = 'YOUR_API_KEY';
+  const stripe_key = 'YOUR_STRIPE_KEY';
 
   const handleInitializePayment = async () => {
     try {
@@ -118,9 +125,7 @@ const Stripe = () => {
         product: 'Product Name',
         currency_code: 'usd',
         callback_url: 'https://www.google.com',
-        timezone: 'Asia/Calcutta',
-        description: 'credit',
-        credit: '1000',
+        stripe_key: stripe_key,
       });
       console.log(initializationResult);
 
@@ -136,6 +141,7 @@ const Stripe = () => {
     try {
       const response = await new DowellStripe().verifyPayment({
         apiKey: apiKey,
+        stripe_key: stripe_key,
         paymentId: paymentId,
       });
 
@@ -180,14 +186,19 @@ Initiates a payment using the paypal payment method.
 3. -`product`: The name of the product.
 4. -`currency`: The currency code (e.g., 'usd').
 5. -`callbackUrl`: The URL to which the payment service will redirect after payment.
-6. -`timezone`, `description`,`credit`: They are used to generate a voucher(Omit them if voucher is not necessary).
+6. -`paypal_client_id`: Your PAYPAL CLIENT ID for accessing paypal payment service.
+7. -`paypal_secret_key`: Your PAYPAL SECRET key for accessing paypal payment service.
+8. -`mode`: For testing or live mode. Set the mode to sandbox incase you wanted to test the API or set the mode to live incase you wanted to switch to live mode and make sure that your Paypal_Client_Id and Paypal_Secret_key is attached to your live app in your paypal account
 
 -`verifyPayment(paymentId, apiKey)`
 
 Verifies a payment using the specified payment method for paypal.
 
 1. -`apiKey`: Your API key for accessing the process module service.
-2. -`paymentId`: The ID of the payment to verify.
+2. -`paypal_client_id`: Your PAYPAL CLIENT ID for accessing paypal payment service.
+3. -`paypal_secret_key`: Your PAYPAL SECRET key for accessing paypal payment service.
+4. -`paymentId`: The ID of the payment to verify.
+5. -`mode`: For testing or live mode. Set the mode to sandbox incase you wanted to test the API or set the mode to live incase you wanted to switch to live mode and make sure that your Paypal_Client_Id and Paypal_Secret_key is attached to your live app in your paypal account
 
 ### API(STRIPE)
 
@@ -199,14 +210,15 @@ Initiates a payment using the stripe payment method.
 3. -`product`: The name of the product.
 4. -`currency`: The currency code (e.g., 'usd').
 5. -`callbackUrl`: The URL to which the payment service will redirect after payment.
-6. -`timezone`, `description`,`credit`: They are used to generate a voucher(Omit them if voucher is not necessary).
+6. -`stripe_key`: Your STRIPE key for accessing stripe payment service.
 
 -`verifyPayment(paymentId, apiKey)`
 
 Verifies a payment using the specified payment method for stripe.
 
 1. -`apiKey`: Your API key for accessing the process module service.
-2. -`paymentId`: The ID of the payment to verify.
+2. -`stripe_key`: Your STRIPE key for accessing stripe payment service.
+3. -`paymentId`: The ID of the payment to verify.
 
 ### NOTE
 

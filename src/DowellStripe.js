@@ -35,7 +35,7 @@ class DowellStripe {
         redirect: 'follow',
       };
 
-      const url = `https://100088.pythonanywhere.com/api/stripe/initialize`;
+      const url = `https://100088.pythonanywhere.com/api/stripe/initialize/public-use`;
 
       const response = await fetch(url, requestOptions);
 
@@ -69,7 +69,7 @@ class DowellStripe {
         redirect: 'follow',
       };
 
-      const url = `https://100088.pythonanywhere.com/api/verify/payment/stripe`;
+      const url = `https://100088.pythonanywhere.com/api/verify/payment/stripe/public-use`;
 
       const response = await fetch(url, requestOptions);
 
