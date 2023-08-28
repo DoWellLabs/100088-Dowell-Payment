@@ -7,6 +7,9 @@ const PayPal = () => {
   const [approvalUrl, setApprovalUrl] = useState();
   const [paymentId, setPaymentId] = useState();
   const apiKey = import.meta.env.VITE_API_KEY;
+  const paypal_client_id = import.meta.env.VITE_PAYPAL_CLIENT_ID;
+  const paypal_secret_key = import.meta.env.VITE_PAYPAL_SECRET_KEY;
+  const mode = import.meta.env.VITE_MODE;
 
   const handleInitializePayment = async () => {
     try {
@@ -19,9 +22,9 @@ const PayPal = () => {
         product: 'Product Name',
         currency_code: 'usd',
         callback_url: 'https://www.google.com',
-        timezone: 'Asia/Calcutta',
-        description: 'credit',
-        credit: '1000',
+        paypal_client_id: paypal_client_id,
+        paypal_secret_key: paypal_secret_key,
+        mode: mode,
       });
       console.log(initializationResult);
 
@@ -37,7 +40,10 @@ const PayPal = () => {
     try {
       const response = await new DowellPaypal().verifyPayment({
         apiKey: apiKey,
+        paypal_client_id: paypal_client_id,
+        paypal_secret_key: paypal_secret_key,
         paymentId: paymentId,
+        mode: mode,
       });
 
       if (response === 'false') {

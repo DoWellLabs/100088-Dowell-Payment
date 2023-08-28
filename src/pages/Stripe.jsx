@@ -7,6 +7,7 @@ const Stripe = () => {
   const [approvalUrl, setApprovalUrl] = useState();
   const [paymentId, setPaymentId] = useState();
   const apiKey = import.meta.env.VITE_API_KEY;
+  const stripe_key = import.meta.env.VITE_STRIPE_KEY;
 
   const handleInitializePayment = async () => {
     try {
@@ -19,9 +20,7 @@ const Stripe = () => {
         product: 'Product Name',
         currency_code: 'usd',
         callback_url: 'https://www.google.com',
-        timezone: 'Asia/Calcutta',
-        description: 'credit',
-        credit: '1000',
+        stripe_key: stripe_key,
       });
       console.log(initializationResult);
 
@@ -37,6 +36,7 @@ const Stripe = () => {
     try {
       const response = await new DowellStripe().verifyPayment({
         apiKey: apiKey,
+        stripe_key: stripe_key,
         paymentId: paymentId,
       });
 
